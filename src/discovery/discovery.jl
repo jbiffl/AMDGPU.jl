@@ -44,7 +44,7 @@ function _hip_runtime_version()
     VersionNumber(major, minor, patch)
 end
 
-global rel_libdir::String = ""
+global rel_libdir::String = Sys.islinux() ? "lib" : "bin"
 global libhsaruntime::String = ""
 global lld_path::String = ""
 global lld_artifact::Bool = false
@@ -73,7 +73,6 @@ function __init__()
     end
 
     rocm_path = find_roc_path()
-    lib_prefix = Sys.islinux() ? "lib" : ""
 
     try
         global libhsaruntime = Sys.islinux() ?
@@ -91,12 +90,12 @@ function __init__()
         global libdevice_libs = get_device_libs(from_artifact; rocm_path)
 
         # HIP-based libraries.
-        global librocblas = find_rocm_library(lib_prefix * "rocblas"; rocm_path)
-        global librocsparse = find_rocm_library(lib_prefix * "rocsparse"; rocm_path)
-        global librocsolver = find_rocm_library(lib_prefix * "rocsolver"; rocm_path)
-        global librocrand = find_rocm_library(lib_prefix * "rocrand"; rocm_path)
-        global librocfft = find_rocm_library(lib_prefix * "rocfft"; rocm_path)
-        global libMIOpen_path = find_rocm_library(lib_prefix * "MIOpen"; rocm_path)
+        global librocblas = find_rocm_library("rocblas"; rocm_path)
+        global librocsparse = find_rocm_library("rocsparse"; rocm_path)
+        global librocsolver = find_rocm_library("rocsolver"; rocm_path)
+        global librocrand = find_rocm_library("rocrand"; rocm_path)
+        global librocfft = find_rocm_library("rocfft"; rocm_path)
+        global libMIOpen_path = find_rocm_library("MIOpen"; rocm_path)
     catch err
         @error """ROCm discovery failed!
         Discovered ROCm path: $rocm_path.
